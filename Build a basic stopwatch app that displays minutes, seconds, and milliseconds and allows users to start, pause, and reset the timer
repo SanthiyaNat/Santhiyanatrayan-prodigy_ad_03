@@ -1,0 +1,62 @@
+import time
+import threading
+
+class Stopwatch:
+    def __init__(self):
+        self.is_running = False
+        self.start_time = 0
+        self.elapsed_time = 0
+        self.timer_thread = None
+
+    def start(self):
+        if not self.is_running:
+            self.start_time = time.time() - self.elapsed_time
+            self.is_running = True
+            self.timer_thread = threading.Thread(target=self._update_timer)
+            self.timer_thread.start()
+
+    def pause(self):
+        if self.is_running:
+            self.elapsed_time = time.time() - self.start_time
+            self.is_running = False
+
+    def reset(self):
+        self.elapsed_time = 0
+        self.is_running = False
+
+    def _update_timer(self):
+        while self.is_running:
+            self.elapsed_time = time.time() - self.start_time
+            minutes, seconds = divmod(self.elapsed_time, 60)
+            milliseconds = (self.elapsed_time - int(self.elapsed_time)) * 1000
+            print(f"\r{int(minutes):02d}:{int(seconds):02d}:{int(milliseconds):03d}", end="")
+            time.sleep(0.01)
+
+def main():
+    stopwatch = Stopwatch()
+
+    while True:
+        print("\nMenu:")
+        print("1. Start")
+        print("2. Pause")
+        print("3. Reset")
+        print("4. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            stopwatch.start()
+        elif choice == '2':
+            stopwatch.pause()
+        elif choice == '3':
+            stopwatch.reset()
+        elif choice == '4':
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
+```
+
